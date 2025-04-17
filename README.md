@@ -3,10 +3,16 @@
 ```Bash
 alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 ```
-### Sail起動
+### コンテナ起動
 ```Bash
 sail up -d &&
 sail npm run dev
+```
+
+# 作業停止時
+### コンテナ停止
+```Bash
+sail stop
 ```
 
 # 初期設定
@@ -25,24 +31,19 @@ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 ```
 ### .env生成
 ```Bash
-cp .env.example
+cp .env.example .env
+```
+### コンテナ起動
+```Bash
+sail up -d
 ```
 ### キー生成
 ```Bash
 sail artisan key:generate
 ```
-### Sail起動
+### Composer & NPMインストール
 ```Bash
-sail up -d
-```
-### Breezeインストール
-※今回はPHPUnit, Vue with Inertiaを選択
-```Bash
-sail composer require laravel/breeze --dev && sail artisan breeze:install
-```
-### SCSS依存ライブラリのインストール
-```Bash
-sail npm install -D sass-embedded
+sail composer install && sail npm install
 ```
 ### テーブル構築
 ```Bash
@@ -54,3 +55,15 @@ sail artisan migrate
 + DB: http://localhost:3306
 + phpMyAdmin: http://localhost:8888
 + Redis: http://localhost:6379
+
+# 環境設定系
+実行の必要はなし
+### SCSS依存ライブラリのインストール
+```Bash
+sail npm install -D sass-embedded
+```
+### Breezeインストール
+※今回はPHPUnit, Vue with Inertiaを選択
+```Bash
+sail composer require laravel/breeze --dev && sail artisan breeze:install
+```
