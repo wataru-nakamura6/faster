@@ -1,41 +1,40 @@
 <script setup>
 import { ref } from 'vue'
-import axios from 'axios'
+import { router } from '@inertiajs/vue3'
 import Header from "@/Components/Header.vue";
 
 const { site_list } = defineProps({
     site_list: Array,
 })
 
-const file = ref(null)
-const result = ref(null)
+const form = ref({
+    name: '',
+    url: ''
+})
 
-const saveURL = (e) => {
-    file.value = e.target.files[0]
+const storeSite = () => {
+    router.post('/store_site', form.value, {
+        onSuccess: () => {
+            form.value = { name: '', url: '' }
+            router.reload({ only: ['site_list'] })
+        },
+        onError: (errors) => {
+            console.error(errors)
+        }
+    })
 }
 
-const uploadURL = async () => {
-    if (!file.value) return
-
-    const formData = new FormData()
-    formData.append('file', file.value)
-
-    try {
-        await axios.post('/api/upload/image', formData)
-        result.value ='アップロード成功'
-    } catch (e) {
-        result.value = 'アップロード失敗'
-    }
-}
 </script>
 
 <template>
     <Header />
     <div id="main_wrap">
-        <div class="register_area">
-            <input type="text" @change="saveURL" />
-            <button @click="uploadURL">登録</button>
-            <p v-if="result">{{ result }}</p>
+        <div class="store_area">
+            <form @submit.prevent="storeSite">
+                <input v-model="form.name" placeholder="サイト名" />
+                <input v-model="form.url" placeholder="URL" />
+                <button type="submit">登録</button>
+            </form>
         </div>
         <div class="site_list">
             <h2>登録サイト一覧</h2>
