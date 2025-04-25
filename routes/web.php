@@ -6,6 +6,7 @@ use Inertia\Inertia;
 
 Route::controller(App\Http\Controllers\TopController::class)->group(function () {
     Route::match(['post', 'get'], '/', 'index')->name('top');
+    Route::match(['post', 'get'], '/store_site', 'storeSite')->name('storeSite');
 });
 
 Route::get('/dashboard', function () {
