@@ -8,7 +8,8 @@ use Inertia\Inertia;
 
 Route::controller(App\Http\Controllers\TopController::class)->group(function () {
     Route::match(['post', 'get'], '/', 'index')->name('top');
-    Route::match(['post', 'get'], '/store_site', 'storeSite')->name('storeSite');
+    Route::match(['post', 'get'], '/save_site', 'save_site')->name('save_site');
+    Route::put('/save_site/{id}', 'save_site')->name('save_site');
 });
 
 Route::get('/dashboard', function () {
