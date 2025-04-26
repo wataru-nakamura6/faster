@@ -1,25 +1,19 @@
 <script setup>
-import {reactive, ref, watch} from 'vue'
-import {usePage, router} from '@inertiajs/vue3'
-
-const page = usePage()
+import {reactive, watch} from 'vue'
+import {router} from '@inertiajs/vue3'
 
 const props = defineProps({
     site: Object,
     isOpen: Boolean
 })
 
-const emits = defineEmits(['close'])
+const emits = defineEmits(['closeEvent'])
 
 const editableSite = reactive({
     id: null,
     name: '',
     url: ''
 })
-
-const flashMessage = ref('')
-const flashMessageType = ref('')
-const showToast = ref(false)
 
 // 編集対象が変わったら内容を反映
 watch(
@@ -37,26 +31,14 @@ watch(
 const submitEdit = () => {
     router.put(`/save_site/${editableSite.id}`, editableSite, {
         onSuccess: () => {
-            emits('close')
             router.reload({ only: ['site_list'] })
-            flashMessage.value = page.props.flash?.message || ''
-            flashMessageType.value = page.props.flash?.message_type || ''
-            triggerToast()
+            emits('closeEvent', 'success');
         },
         onError: (errors) => {
             console.error(errors)
-            flashMessage.value = page.props.flash?.message || 'エラーが発生しました'
-            flashMessageType.value = page.props.flash?.message_type || 'error'
-            triggerToast()
+            emits('closeEvent',  'errors');
         }
     })
-}
-
-const triggerToast = () => {
-    showToast.value = true
-    setTimeout(() => {
-        showToast.value = false
-    }, 3000)
 }
 </script>
 
@@ -68,7 +50,7 @@ const triggerToast = () => {
             <input v-model="editableSite.url" placeholder="URL" />
             <div class="actions">
                 <button @click="submitEdit">保存</button>
-                <button @click="$emit('close')">キャンセル</button>
+                <button @click="$emit('closeEvent')">キャンセル</button>
             </div>
         </div>
     </div>

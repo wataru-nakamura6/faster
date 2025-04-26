@@ -1,6 +1,6 @@
 <script setup>
 import {ref} from 'vue'
-import {usePage, router} from '@inertiajs/vue3'
+import {router} from '@inertiajs/vue3'
 import Header from "@/Components/Header.vue";
 import EditSite from "@/Components/EditSite.vue";
 
@@ -14,7 +14,6 @@ const form = ref({
 })
 
 //登録、更新処理
-const page = usePage()
 const flashMessage = ref('')
 const flashMessageType = ref('')
 const showToast = ref(false)
@@ -24,15 +23,11 @@ const storeSite = () => {
     onSuccess: () => {
       form.value = {name: '', url: ''}
       router.reload({only: ['site_list']})
-      flashMessage.value = page.props.flash?.message || ''
-      flashMessageType.value = page.props.flash?.message_type || ''
-      triggerToast()
+      closeEvent('success')
     },
     onError: (errors) => {
       console.error(errors)
-      flashMessage.value = page.props.flash?.message || 'エラーが発生しました'
-      flashMessageType.value = page.props.flash?.message_type || 'error'
-      triggerToast()
+      closeEvent('errors')
     }
   })
 }
@@ -52,6 +47,15 @@ const selectedSite = ref(null)
 const openEditModal = (site) => {
   selectedSite.value = site
   showModal.value = true
+}
+
+const closeEvent = (result=false) => {
+  showModal.value = false;
+  if (result !==false ) {
+    flashMessage.value = result==='success' ? '登録が完了しました' : 'エラーが発生しました'
+    flashMessageType.value = result || 'errors'
+    triggerToast()
+  }
 }
 </script>
 
@@ -102,7 +106,7 @@ const openEditModal = (site) => {
       :isOpen="showModal"
       :flashMessage="flashMessage"
       :flashMessageType="flashMessageType"
-      @close="showModal = false"
+      @closeEvent="closeEvent"
   />
 </template>
 
