@@ -62,14 +62,6 @@ const closeEvent = (result=false) => {
 <template>
   <Header/>
   <div id="main_wrap">
-    <transition name="toast">
-      <div
-          v-if="showToast"
-          class="toast"
-          :class="`${flashMessageType}_message`">
-        {{ flashMessage }}
-      </div>
-    </transition>
     <div class="store_area">
       <form @submit.prevent="storeSite">
         <input v-model="form.name" placeholder="サイト名"/>
@@ -88,18 +80,27 @@ const closeEvent = (result=false) => {
           <th>操作</th>
         </tr>
         <tr v-for="site in site_list">
-          <th>{{ site.name }}</th>
-          <th>{{ site.url }}</th>
-          <th>{{ site.created_at }}</th>
-          <th>
+          <td>{{ site.name }}</td>
+          <td>{{ site.url }}</td>
+          <td>{{ site.created_at }}</td>
+          <td>
             <button @click="openEditModal(site)">編集</button>
             <button>停止</button>
-          </th>
+          </td>
         </tr>
         </tbody>
       </table>
     </div>
   </div>
+
+  <transition name="toast">
+    <div
+        v-if="showToast"
+        class="toast"
+        :class="`${flashMessageType}_message`">
+      {{ flashMessage }}
+    </div>
+  </transition>
 
   <EditSite
       :site="selectedSite"
@@ -112,60 +113,10 @@ const closeEvent = (result=false) => {
 
 <style lang="scss" scoped>
 #main_wrap {
-  max-width: 1020px;
+  max-width: 1240px;
   margin: auto;
   padding: 40px 80px;
   font-size: 13px;
-
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    min-width: 250px;
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-weight: bold;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-  }
-
-  .success_message {
-    background-color: #d4edda;
-    color: #155724;
-  }
-
-  .error_message {
-    background-color: #f8d7da;
-    color: #721c24;
-  }
-
-  .toast-enter-from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  .toast-enter-active {
-    transition: all 0.5s ease;
-  }
-
-  .toast-enter-to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  .toast-leave-from {
-    transform: translateX(0);
-    opacity: 1;
-  }
-
-  .toast-leave-active {
-    transition: all 0.5s ease;
-  }
-
-  .toast-leave-to {
-    transform: translateX(100%);
-    opacity: 0;
-  }
 
   input {
     border: 1px solid #E0E0E0;
@@ -195,8 +146,64 @@ const closeEvent = (result=false) => {
 
       tr {
         border-bottom: 1px solid #E0E0E0;
+
+        td{
+          padding: 10px;
+          text-align: left;
+        }
       }
     }
   }
+}
+
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  min-width: 250px;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  background: #fff;
+}
+
+.success_message {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.error_message {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.toast-enter-from {
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.toast-enter-active {
+  transition: all 0.5s ease;
+}
+
+.toast-enter-to {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-leave-from {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-leave-active {
+  transition: all 0.5s ease;
+}
+
+.toast-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 </style>
