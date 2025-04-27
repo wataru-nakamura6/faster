@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Site;
 use Inertia\Inertia;
 use App\Http\Requests\StoreSiteRequest;
@@ -16,16 +18,38 @@ class TopController extends Controller
         ]);
     }
 
-    public function storeSite(StoreSiteRequest $request)
+    public function save_site(StoreSiteRequest $request, $id = null)
     {
-        do {
-            $randomKey = Str::random(10);
-        } while (Site::where('uuid', $randomKey)->exists());
+        $validated = $request->validated();
 
-        Site::create(array_merge(
-            $request->validated(),
-            //TODO:user_idは仮の値の為ログイン実装後要変更
-            ['uuid' => $randomKey, 'user_id' => 1]
-        ));
+        try {
+            if (is_null($id)) {
+                // 新規登録
+                do {
+                    $randomKey = Str::random(10);
+                } while (Site::where('uuid', $randomKey)->exists());
+                $siteData = array_merge($validated, [
+                    'uuid' => $randomKey,
+                    'user_id' => 1, // TODO: ログイン実装後変更
+                ]);
+                Site::create($siteData);
+                $message = 'サイトを登録しました。';
+            } else {
+                // 更新
+                $site = Site::findOrFail($id);
+                $site->update($validated);
+                $message = 'サイト情報を更新しました。';
+            }
+
+            return back()->with([
+                'message' => $message,
+                'message_type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            return back()->with([
+                'message' => '処理に失敗しました。もう一度お試しください。',
+                'message_type' => 'error'
+            ]);
+        }
     }
 }
