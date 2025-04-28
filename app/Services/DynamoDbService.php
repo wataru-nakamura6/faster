@@ -41,7 +41,27 @@ class DynamoDbService
     }
 
     /**
-     * レコード取得
+     * PK レコード取得
+     */
+    public function queryByPartitionKey(string $tableName, array $keyCondition)
+    {
+        $params = [
+            'TableName' => $tableName,
+            'KeyConditionExpression' => 'site_id = :site_id',
+            'ExpressionAttributeValues' => [
+                ':site_id' => ['N' => (string) $keyCondition['site_id']],
+            ],
+        ];
+
+        $result = $this->client->query($params);
+
+        return array_map(function ($item) {
+            return $this->marshaler->unmarshalItem($item);
+        }, $result->get('Items'));
+    }
+
+    /**
+     * PK + SK レコード取得
      */
     public function getItem(string $tableName, array $key)
     {
@@ -78,4 +98,38 @@ class DynamoDbService
 
         return $this->client->batchWriteItem($params);
     }
+
+    /**
+     * PK 一致するレコードを全削除
+     */
+    public function deleteByPartitionKey(string $tableName, array $keyCondition)
+    {
+        // まず対象データを取得
+        $items = $this->queryByPartitionKey($tableName, $keyCondition);
+
+        if (empty($items)) {
+            return;
+        }
+
+        $requests = [];
+        foreach ($items as $item) {
+            $requests[] = [
+                'DeleteRequest' => [
+                    'Key' => $this->marshaler->marshalItem([
+                        'site_id' => $item['site_id'],
+                        'image_id' => $item['image_id'],
+                    ]),
+                ],
+            ];
+        }
+
+        $params = [
+            'RequestItems' => [
+                $tableName => $requests,
+            ],
+        ];
+
+        $this->client->batchWriteItem($params);
+    }
+
 }

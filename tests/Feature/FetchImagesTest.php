@@ -14,9 +14,11 @@ class FetchImagesTest extends TestCase
 
         // テスト対象のURL
         $url = 'https://www.leggings-rank.info';
+        $site_id = 1;
 
         // /scrape に POST リクエストを送る
         $response = $this->postJson('/scrape', [
+            'site_id' => $site_id,
             'url' => $url,
         ]);
 
