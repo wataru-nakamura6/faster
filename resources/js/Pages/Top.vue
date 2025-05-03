@@ -19,7 +19,7 @@ const flashMessageType = ref('')
 const showToast = ref(false)
 
 const storeSite = () => {
-    router.post('/save_site', form.value, {
+    router.post('/site/create', form.value, {
         onSuccess: () => {
             form.value = {name: '', url: ''}
             router.reload({only: ['site_list']})

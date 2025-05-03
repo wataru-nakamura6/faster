@@ -2,15 +2,22 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ScrapeController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\SiteController;
+use App\Http\Controllers\TopController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::controller(App\Http\Controllers\TopController::class)->group(function () {
-    Route::match(['post', 'get'], '/', 'index')->name('top');
-    Route::match(['post', 'get'], '/save_site', 'save_site')->name('save_site');
-    Route::put('/save_site/{id}', 'save_site')->name('save_site');
+Route::controller(TopController::class)->group(function () {
+    Route::get('/', 'index')->name('top');
 });
+
+Route::controller(SiteController::class)
+    ->prefix('site')
+    ->name('site.')
+    ->group(function () {
+        Route::post('create', 'create')->name('create');
+        Route::post('update/{id}', 'update')->name('update');
+    });
 
 Route::get('/dashboard', function () {
     return Inertia::render('Laravel/Dashboard');
@@ -22,6 +29,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::match(['post', 'get'],'/scrape', [ScrapeController::class, 'fetchImages'])->name('scrape');
+Route::match(['post', 'get'], '/scrape', [ScrapeController::class, 'fetchImages'])->name('scrape');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
