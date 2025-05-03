@@ -1,13 +1,14 @@
 <script setup>
 import {reactive, watch} from 'vue'
 import {router} from '@inertiajs/vue3'
+import {useToast} from "vue-toast-notification";
 
 const props = defineProps({
     site: Object,
     isOpen: Boolean
 })
 
-const emits = defineEmits(['closeEvent'])
+const emits = defineEmits(['isClose'])
 
 const editableSite = reactive({
     id: null,
@@ -30,13 +31,15 @@ watch(
 
 const submitEdit = () => {
     router.post(`/site/update/${editableSite.id}`, editableSite, {
-        onSuccess: () => {
+        onSuccess: ({props: {flash}}) => {
+            useToast().success(flash?.message)
             router.reload({ only: ['site_list'] })
-            emits('closeEvent', 'success');
+            emits('isClose');
         },
         onError: (errors) => {
+            useToast().error(Object.values(errors).join('\n'))
             console.error(errors)
-            emits('closeEvent',  'errors');
+            emits('isClose');
         }
     })
 }
@@ -50,7 +53,7 @@ const submitEdit = () => {
             <input v-model="editableSite.url" placeholder="URL" />
             <div class="actions">
                 <button @click="submitEdit">保存</button>
-                <button @click="$emit('closeEvent')">キャンセル</button>
+                <button @click="$emit('isClose')">キャンセル</button>
             </div>
         </div>
     </div>

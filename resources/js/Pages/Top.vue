@@ -2,66 +2,34 @@
 import {ref} from 'vue'
 import {router} from '@inertiajs/vue3'
 import Header from "@/Components/Header.vue";
-import EditSite from "@/Components/EditSite.vue";
+import SiteList from "@/Components/SiteList.vue";
+import {useToast} from "vue-toast-notification";
 
 const {site_list} = defineProps({
     site_list: Array,
 })
+
+// TODO: 新規登録処理をコンポーネント&モーダル化
+const storeSite = () => {
+    router.post('/site/create', form.value, {
+        onSuccess: ({props: {flash}}) => {
+            useToast().success(flash?.message)
+            form.value = {name: '', url: ''}
+            router.reload({only: ['site_list']})
+        },
+        onError: (errors) => {
+            // 複数エラーを表示できるようにする
+            useToast().error(Object.values(errors).join('\n'))
+            console.error(errors)
+        }
+    })
+}
 
 const form = ref({
     name: '',
     url: ''
 })
 
-//登録、更新処理
-const flashMessage = ref('')
-const flashMessageType = ref('')
-const showToast = ref(false)
-
-const storeSite = () => {
-    router.post('/site/create', form.value, {
-        onSuccess: () => {
-            form.value = {name: '', url: ''}
-            router.reload({only: ['site_list']})
-            closeEvent('success')
-        },
-        onError: (errors) => {
-            console.error(errors)
-            closeEvent('errors')
-        }
-    })
-}
-
-// トーストを表示して3秒後に非表示にする
-const triggerToast = () => {
-    showToast.value = true
-    setTimeout(() => {
-        showToast.value = false
-    }, 3000)
-}
-
-//モーダル処理
-const showModal = ref(false)
-const selectedSite = ref(null)
-
-const openEditModal = (site) => {
-    selectedSite.value = site
-    showModal.value = true
-}
-
-const closeEvent = (result = false) => {
-    showModal.value = false;
-    if (result !== false) {
-        flashMessage.value = result === 'success' ? '登録が完了しました' : 'エラーが発生しました'
-        flashMessageType.value = result || 'errors'
-        triggerToast()
-    }
-}
-
-const selectedId = ref(0)
-const selectRow = (id) => {
-    selectedId.value = id
-}
 </script>
 
 <template>
@@ -74,61 +42,8 @@ const selectRow = (id) => {
                 <button type="submit">登録</button>
             </form>
         </div>
-        <div class="site_list">
-            <h2>登録サイト一覧</h2>
-            <table>
-                <thead>
-                <tr>
-                    <th>タイトル</th>
-                    <th>URL</th>
-                    <th>登録日時</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                <template v-for="site in site_list" :key="site.id">
-                    <tr @click="selectRow(site.id)">
-                        <td>{{ site.name }}</td>
-                        <td>{{ site.url }}</td>
-                        <td>{{ site.created_at }}</td>
-                        <td>
-                            <button @click="openEditModal(site)">
-                                <img src="/images/pen.svg" alt="編集">
-                            </button>
-                            <button>
-                                <div class="stop_icon"></div>
-                            </button>
-                        </td>
-                    </tr>
-                    <tr class="site_tag">
-                        <td v-if="selectedId === site.id" colspan="4" class="p-0">
-                            <div class="accordion-content">
-                                高速化タグ：{{ site.id }}
-                            </div>
-                        </td>
-                    </tr>
-                </template>
-                </tbody>
-            </table>
-        </div>
+        <SiteList :site_list="site_list" />
     </div>
-
-    <transition name="toast">
-        <div
-            v-if="showToast"
-            class="toast"
-            :class="`${flashMessageType}_message`">
-            {{ flashMessage }}
-        </div>
-    </transition>
-
-    <EditSite
-        :site="selectedSite"
-        :isOpen="showModal"
-        :flashMessage="flashMessage"
-        :flashMessageType="flashMessageType"
-        @closeEvent="closeEvent"
-    />
 </template>
 
 <style lang="scss" scoped>
@@ -157,92 +72,6 @@ const selectRow = (id) => {
             width: 14px;
             height: 14px;
             object-fit: contain;
-        }
-    }
-
-    .site_list {
-        border: 1px solid #E0E0E0;
-        border-radius: 8px;
-        margin-top: 30px;
-        box-shadow: #eee 0 0 8px;
-        padding: 8px 16px;
-
-        h2 {
-            padding-bottom: 8px;
-            font-weight: bold;
-            font-size: 14px;
-            line-height: 2;
-        }
-
-        table {
-            table-layout: auto;
-            width: 100%;
-
-            tr {
-                &:last-child {
-                    border: none;
-                }
-
-                th {
-                    font-size: 12px;
-                    color: #858585;
-                    font-weight: bold;
-                    line-height: 2;
-
-                    &:first-child {
-                        width: 160px;
-                    }
-
-                    &:first-child,
-                    &:nth-child(2) {
-                        text-align: left;
-                    }
-                }
-
-                td {
-                    padding: 8px 0;
-                    text-align: left;
-
-                    &:last-child {
-                        padding-right: 0;
-                        display: flex;
-                        align-items: center;
-                        justify-content: space-around;
-                    }
-
-                    button {
-                        background: #0f0f0f;
-                        color: #fff;
-                        border-radius: 50px;
-                        height: 24px;
-                        width: 24px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-
-                        img {
-                            width: 14px;
-                            height: 14px;
-                            object-fit: contain;
-                        }
-
-                        .stop_icon {
-                            height: 10px;
-                            width: 10px;
-                            background: #fff;
-                            border-radius: 2px;
-                        }
-                    }
-                }
-
-                &.site_tag {
-                    border-bottom: 1px solid #E0E0E0;
-
-                    td {
-                        display: inline-block;
-                    }
-                }
-            }
         }
     }
 }
