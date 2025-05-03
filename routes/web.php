@@ -22,6 +22,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/scrape', [ScrapeController::class, 'fetchImages'])->name('scrape');
+Route::match(['post', 'get'],'/scrape', [ScrapeController::class, 'fetchImages'])->name('scrape');
 
 require __DIR__.'/auth.php';
