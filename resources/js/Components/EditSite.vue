@@ -29,7 +29,7 @@ watch(
 )
 
 const submitEdit = () => {
-    router.put(`/save_site/${editableSite.id}`, editableSite, {
+    router.post(`/site/update/${editableSite.id}`, editableSite, {
         onSuccess: () => {
             router.reload({ only: ['site_list'] })
             emits('closeEvent', 'success');
