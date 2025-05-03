@@ -22,8 +22,8 @@ class ScrapeController extends Controller
     {
         // 開発用URL
         // $url = $request->input('url');
-        $url = 'https://www.leggings-rank.info';
-        $site_id = 1;
+        $url = 'https://ja.stackoverflow.com/';
+        $site_id = 2;
 
         // site_idから更新前のimage_idを取得
         $image_ids = array_column(
@@ -54,7 +54,7 @@ class ScrapeController extends Controller
             // TODO: 25件以上の場合のループ処理
             $this->dynamoDb->batchPutItems('images', $items);
 
-            return $response->json();
+            return $items;
 
         } catch (\Exception $e) {
             return response()->json(['error' => 'エラー: ' . $e->getMessage()], 500);
