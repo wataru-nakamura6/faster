@@ -145,7 +145,7 @@ const leave = (el, done) => {
                         text-align: left;
                         padding-left: 0;
                         text-wrap: nowrap;
-                        overflow-x: scroll;
+                        overflow-x: auto;
                     }
 
                     &.date {
@@ -205,4 +205,20 @@ const leave = (el, done) => {
 
 }
 
+/* スクロールバー全体 */
+::-webkit-scrollbar {
+    height: 2px; /* 横スクロール用 */
+}
+
+/* スクロールバーのトラック（背景） */
+::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+    border-radius: 2px;
+}
+
+/* スクロールバーのつまみ */
+::-webkit-scrollbar-thumb {
+    background-color: #0f0f0f;
+    border-radius: 2px;
+}
 </style>
