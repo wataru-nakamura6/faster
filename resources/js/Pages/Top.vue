@@ -60,8 +60,9 @@ const showCreateModal = ref(false)
 #main_wrap {
     max-width: 1240px;
     margin: auto;
-    padding: 24px 80px;
+    padding: 16px 80px 24px;
     font-size: 13px;
+    height: 100%;
 
     input {
         border: 1px solid #E0E0E0;
@@ -107,6 +108,7 @@ const showCreateModal = ref(false)
 
 .create_modal_wrap {
     opacity: 0.4;
+    margin-bottom: 16px;
 
     &:hover {
     opacity: 1;

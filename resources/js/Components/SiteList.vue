@@ -96,7 +96,6 @@ const leave = (el, done) => {
 .site_wrap {
     border: 1px solid #E0E0E0;
     border-radius: 8px;
-    margin-top: 16px;
     box-shadow: #eee 0 0 8px;
     padding: 8px 16px 16px;
 
