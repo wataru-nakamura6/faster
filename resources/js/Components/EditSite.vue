@@ -29,8 +29,22 @@ watch(
     { immediate: true }
 )
 
-const submitEdit = () => {
-    router.post(`/site/update/${editableSite.id}`, editableSite, {
+let postRoute = '';
+const submitRoute = () => {
+    // 更新処理
+    postRoute = `/site/update/${editableSite.id}`;
+
+    if(!editableSite.id) {
+        // 新規登録
+        postRoute = `/site/create`;
+        delete editableSite.id;
+    }
+
+    submitSite();
+}
+
+const submitSite = () => {
+    router.post(postRoute, editableSite, {
         onSuccess: ({props: {flash}}) => {
             useToast().success(flash?.message)
             router.reload({ only: ['site_list'] })
@@ -38,8 +52,6 @@ const submitEdit = () => {
         },
         onError: (errors) => {
             useToast().error(Object.values(errors).join('\n'))
-            console.error(errors)
-            emits('isClose');
         }
     })
 }
@@ -52,7 +64,7 @@ const submitEdit = () => {
             <input v-model="editableSite.name" placeholder="サイト名" />
             <input v-model="editableSite.url" placeholder="URL" />
             <div class="actions">
-                <button @click="submitEdit">保存</button>
+                <button @click="submitRoute">保存</button>
                 <button @click="$emit('isClose')">キャンセル</button>
             </div>
         </div>

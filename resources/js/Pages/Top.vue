@@ -4,6 +4,7 @@ import {router} from '@inertiajs/vue3'
 import Header from "@/Components/Header.vue";
 import SiteList from "@/Components/SiteList.vue";
 import {useToast} from "vue-toast-notification";
+import EditSite from "@/Components/EditSite.vue";
 
 const {site_list} = defineProps({
     site_list: Array,
@@ -30,27 +31,34 @@ const form = ref({
     url: ''
 })
 
+const showCreateModal = ref(false)
+
 </script>
 
 <template>
     <Header/>
     <div id="main_wrap">
-        <div class="store_area">
-            <form @submit.prevent="storeSite">
-                <input v-model="form.name" placeholder="サイト名"/>
-                <input v-model="form.url" placeholder="URL"/>
-                <button type="submit">登録</button>
-            </form>
-        </div>
+            <button
+                type="button"
+                class="create_modal_button"
+                @click="showCreateModal=true"
+            >
+                <img src="/images/plus.svg" alt="">
+                <span>サイトを追加する</span>
+            </button>
         <SiteList :site_list="site_list" />
     </div>
+    <EditSite
+        :isOpen="showCreateModal"
+        @isClose="showCreateModal=false"
+    />
 </template>
 
 <style lang="scss" scoped>
 #main_wrap {
     max-width: 1240px;
     margin: auto;
-    padding: 40px 80px;
+    padding: 24px 80px;
     font-size: 13px;
 
     input {
@@ -72,6 +80,25 @@ const form = ref({
             width: 14px;
             height: 14px;
             object-fit: contain;
+        }
+
+        &.create_modal_button {
+            width: 100%;
+            padding: 24px 0;
+            color: #0f0f0f;
+            background: none;
+            font-size: 14px;
+            line-height: 14px;
+            border: 1px dashed #0f0f0f;
+            border-radius: 8px;
+
+            img {
+                width: 14px;
+                height: 14px;
+                object-fit: contain;
+                margin-bottom: 2px;
+                margin-right: 12px;
+            }
         }
     }
 }
