@@ -12,14 +12,18 @@ sail npm run dev
 ```Bash
 sail composer install && sail npm install
 ```
-### データベース更新
+### データベース更新 & テストデータの挿入
 ```Bash
 sail artisan migrate --seed
 ```
-+ #### データをリセットする場合
++ #### データをリセット & テストデータの挿入
 ```Bash
 sail artisan migrate:refresh --seed
 ```
+### テスト用ログイン情報
+> test@example.com
+
+> password
 
 # 作業停止時
 ### コンテナ停止
@@ -61,9 +65,6 @@ sail composer install && sail npm install
 ```Bash
 sail artisan migrate --seed
 ```
-### テストアカウント
-+ test@example.com
-+ password
 
 # URL
 + 開発環境: http://localhost
