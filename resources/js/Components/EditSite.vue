@@ -61,8 +61,12 @@ const submitSite = () => {
     <div v-if="isOpen" class="modal_overlay">
         <div class="modal_content">
             <h2>サイト情報を編集</h2>
-            <input v-model="editableSite.name" placeholder="サイト名" />
-            <input v-model="editableSite.url" placeholder="URL" />
+            <input class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                   v-model="editableSite.name"
+                   placeholder="サイト名" />
+            <input class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                   v-model="editableSite.url"
+                   placeholder="URL" />
             <div class="actions">
                 <button @click="submitRoute">保存</button>
                 <button @click="$emit('isClose')">キャンセル</button>
@@ -96,10 +100,8 @@ const submitSite = () => {
         }
 
         input{
-            border: 1px solid #E0E0E0;
-            border-radius: 50px;
-            margin-bottom: 5px;
             width: 100%;
+            margin-bottom: 4px;
         }
 
         .actions {
