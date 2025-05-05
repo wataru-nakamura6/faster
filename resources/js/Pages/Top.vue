@@ -38,6 +38,7 @@ const showCreateModal = ref(false)
 <template>
     <Header/>
     <div id="main_wrap">
+        <div class="create_modal_wrap">
             <button
                 type="button"
                 class="create_modal_button"
@@ -46,7 +47,8 @@ const showCreateModal = ref(false)
                 <img src="/images/plus.svg" alt="">
                 <span>サイトを追加する</span>
             </button>
-        <SiteList :site_list="site_list" />
+        </div>
+        <SiteList :site_list="site_list"/>
     </div>
     <EditSite
         :isOpen="showCreateModal"
@@ -84,7 +86,7 @@ const showCreateModal = ref(false)
 
         &.create_modal_button {
             width: 100%;
-            padding: 24px 0;
+            height: 48px;
             color: #0f0f0f;
             background: none;
             font-size: 14px;
@@ -100,6 +102,14 @@ const showCreateModal = ref(false)
                 margin-right: 12px;
             }
         }
+    }
+}
+
+.create_modal_wrap {
+    opacity: 0.4;
+
+    &:hover {
+    opacity: 1;
     }
 }
 
