@@ -8,6 +8,18 @@ alias sail='[ -f sail ] && sh sail || sh vendor/bin/sail'
 sail up -d &&
 sail npm run dev
 ```
+### パッケージ更新
+```Bash
+sail composer install && sail npm install
+```
+### データベース更新
+```Bash
+sail artisan migrate --seed
+```
++ #### データをリセットする場合
+```Bash
+sail artisan migrate:refresh --seed
+```
 
 # 作業停止時
 ### コンテナ停止
@@ -45,10 +57,13 @@ sail artisan key:generate
 ```Bash
 sail composer install && sail npm install
 ```
-### テーブル構築
+### テーブル構築 & テストデータ作成
 ```Bash
-sail artisan migrate
+sail artisan migrate --seed
 ```
+### テストアカウント
++ test@example.com
++ password
 
 # URL
 + 開発環境: http://localhost

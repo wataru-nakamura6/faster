@@ -7,17 +7,21 @@ use App\Http\Controllers\TopController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::controller(TopController::class)->group(function () {
-    Route::get('/', 'index')->name('top');
+Route::middleware('auth')->group(function () {
+    Route::controller(TopController::class)->group(function () {
+        Route::get('/', 'index')->name('top');
+    });
+
+    Route::controller(SiteController::class)
+        ->prefix('site')
+        ->name('site.')
+        ->group(function () {
+            Route::post('create', 'create')->name('create');
+            Route::post('update/{id}', 'update')->name('update');
+        });
 });
 
-Route::controller(SiteController::class)
-    ->prefix('site')
-    ->name('site.')
-    ->group(function () {
-        Route::post('create', 'create')->name('create');
-        Route::post('update/{id}', 'update')->name('update');
-    });
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Laravel/Dashboard');
