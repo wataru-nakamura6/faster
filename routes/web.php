@@ -5,7 +5,6 @@ use App\Http\Controllers\ScrapeController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TopController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::middleware('auth')->group(function () {
     Route::controller(TopController::class)->group(function () {
@@ -20,12 +19,6 @@ Route::middleware('auth')->group(function () {
             Route::post('update/{id}', 'update')->name('update');
         });
 });
-
-
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Laravel/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
