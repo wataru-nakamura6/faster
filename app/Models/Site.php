@@ -12,6 +12,8 @@ class Site extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $appends = ['status_label'];
+
     protected $fillable = [
         'name',
         'status',
@@ -19,6 +21,7 @@ class Site extends Model
         'url',
         'uuid',
         'remark',
+        'upload_status'
     ];
 
     protected function createdAt(): Attribute
@@ -26,5 +29,23 @@ class Site extends Model
         return Attribute::make(
             get: fn ($value) => Carbon::parse($value)->format('Y年m月d日'),
         );
+    }
+
+    protected function updatedAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value) => Carbon::parse($value)->format('Y年m月d日'),
+        );
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return match ($this->upload_status) {
+            0 => '最適化作業前',
+            1 => '最適化済み',
+            2 => '登録エラー',
+            3 => '取得エラー',
+            default => '不明なエラー',
+        };
     }
 }

@@ -17,6 +17,8 @@ Route::controller(SiteController::class)
     ->group(function () {
         Route::post('create', 'create')->name('create');
         Route::post('update/{id}', 'update')->name('update');
+        Route::post('site-status', 'siteStatus')->name('site-status');
+        Route::post('upload-log', 'uploadLog')->name('upload-log');
     });
 
 Route::get('/dashboard', function () {

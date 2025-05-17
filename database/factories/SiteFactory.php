@@ -25,7 +25,7 @@ class SiteFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->realText(10),
             'status' => fake()->numberBetween(0, 1),
             'user_id' => User::factory(),
             'url' => fake()->url(),
