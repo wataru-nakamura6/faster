@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Site;
-use App\Models\SiteStatusLog;
 use App\Models\UploadLog;
 use App\Http\Requests\StoreSiteRequest;
 use Illuminate\Http\Request;

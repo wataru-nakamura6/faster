@@ -82,7 +82,7 @@ const leave = (el, done) => {
                             <img src="/images/pen.svg" alt="編集"/>
                         </button>
                         <button>
-                            <div class="stop_icon"></div>
+                            <span class="stop_icon"></span>
                         </button>
                     </div>
                 </div>
