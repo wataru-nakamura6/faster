@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Site;
+use App\Models\UploadLog;
 use App\Http\Requests\StoreSiteRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class SiteController extends Controller
@@ -49,5 +51,29 @@ class SiteController extends Controller
                 'message' => '更新に失敗しました。もう一度お試しください。',
             ]);
         }
+    }
+
+    public function siteStatus(Request $request)
+    {
+        $site =  Site::find($request->site_id);
+        $site->upload_status = $request->upload_status;
+        $site->save();
+
+        return response()->json(['message' => '保存完了']);
+    }
+
+    public function uploadLog(Request $request)
+    {
+        $request->validate([
+            'site_id' => 'required|integer',
+            'message' => 'required|string',
+        ]);
+
+        UploadLog::create([
+            'site_id' => $request->site_id,
+            'message' => $request->message,
+        ]);
+
+        return response()->json(['success' => true]);
     }
 }

@@ -1,6 +1,7 @@
 <script setup>
 import {ref} from 'vue'
 import EditSite from "@/Components/EditSite.vue";
+import UpdateMedia from "@/Components/UpdateMedia.vue";
 
 const {site_list} = defineProps({
     site_list: {
@@ -16,6 +17,13 @@ const selectedSite = ref(null)
 const openEditModal = (site) => {
     selectedSite.value = site
     showModal.value = true
+}
+
+const showUploadModal = ref(false)
+
+const openUploadModal = (site) => {
+    selectedSite.value = site
+    showUploadModal.value = true
 }
 
 const selectedId = ref(0)
@@ -54,6 +62,8 @@ const leave = (el, done) => {
                     <span class="site_cell title">サイト名</span>
                     <span class="site_cell url">URL</span>
                     <span class="site_cell date">登録日時</span>
+                    <span class="site_cell date">最適化実施日時</span>
+                    <span class="site_cell state">状態</span>
                     <div class="site_cell actions">操作</div>
                 </div>
             </li>
@@ -62,12 +72,17 @@ const leave = (el, done) => {
                     <span class="site_cell title">{{ site.name }}</span>
                     <span class="site_cell url">{{ site.url }}</span>
                     <span class="site_cell date">{{ site.created_at }}</span>
+                    <span class="site_cell date">{{ (site.upload_status !== 0) ? site.updated_at : '未実施' }}</span>
+                    <span class="site_cell state">{{ site.status_label }}</span>
                     <div class="site_cell actions">
+                        <button class="upload"  @click.stop="openUploadModal(site)">
+                            最適化する
+                        </button>
                         <button @click.stop="openEditModal(site)">
                             <img src="/images/pen.svg" alt="編集"/>
                         </button>
                         <button>
-                            <div class="stop_icon"></div>
+                            <span class="stop_icon"></span>
                         </button>
                     </div>
                 </div>
@@ -78,7 +93,7 @@ const leave = (el, done) => {
                     @leave="leave"
                 >
                     <div class="accordion" v-show="selectedId===site.id">
-                        高速化タグ：dummysite.com?pram={{ site.uuid }}
+                        高速化タグ：https://media-upload.kushida.workers.dev/embed.js?id={{ site.uuid }}
                     </div>
                 </transition>
             </li>
@@ -89,6 +104,12 @@ const leave = (el, done) => {
         :site="selectedSite"
         :isOpen="showModal"
         @isClose="showModal=false"
+    />
+
+    <UpdateMedia
+        :site="selectedSite"
+        :isOpen="showUploadModal"
+        @isClose="showUploadModal=false"
     />
 </template>
 
@@ -136,6 +157,11 @@ const leave = (el, done) => {
                         overflow-x: auto;
                     }
 
+                    &.state {
+                        width: 100px;
+                        text-align: center;
+                    }
+
                     &.date {
                         width: 120px;
                         text-align: center;
@@ -146,7 +172,7 @@ const leave = (el, done) => {
                         align-items: center;
                         justify-content: center;
                         padding-right: 0;
-                        width: 64px;
+                        width: 150px;
 
                         button {
                             background: #0f0f0f;
@@ -161,6 +187,16 @@ const leave = (el, done) => {
                             padding: 0;
                             cursor: pointer;
                             margin-right: 4px;
+
+                            &.upload{
+                                background: #930000;
+                                color: #fff;
+                                border-radius: 50px;
+                                height: 24px;
+                                width: 80px;
+                                align-items: center;
+                                justify-content: center;
+                            }
 
                             &:last-child {
                                 margin-right: 0;
