@@ -1,5 +1,5 @@
 <script setup>
-import GuestLayout from '@/Layouts/Laravel/GuestLayout.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
 import InputError from '@/Components/Laravel/InputError.vue';
 import InputLabel from '@/Components/Laravel/InputLabel.vue';
 import PrimaryButton from '@/Components/Laravel/PrimaryButton.vue';

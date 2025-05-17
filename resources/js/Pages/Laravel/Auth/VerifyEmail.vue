@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import GuestLayout from '@/Layouts/Laravel/GuestLayout.vue';
+import GuestLayout from '@/Layouts/GuestLayout.vue';
 import PrimaryButton from '@/Components/Laravel/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
