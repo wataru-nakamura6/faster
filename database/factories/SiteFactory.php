@@ -13,21 +13,18 @@ use Illuminate\Support\Str;
 class SiteFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * Site
+     *
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
     protected $model = Site::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
             'name' => fake()->realText(10),
             'status' => fake()->numberBetween(0, 1),
-            'user_id' => User::factory(),
+            'user_id' => 1,
             'url' => fake()->url(),
             'uuid' => Str::random(10),
         ];

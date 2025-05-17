@@ -1,34 +1,11 @@
 <script setup>
 import {ref} from 'vue'
-import {router} from '@inertiajs/vue3'
-import Header from "@/Components/Header.vue";
 import SiteList from "@/Components/SiteList.vue";
-import {useToast} from "vue-toast-notification";
 import EditSite from "@/Components/EditSite.vue";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 const {site_list} = defineProps({
     site_list: Array,
-})
-
-// TODO: 新規登録処理をコンポーネント&モーダル化
-const storeSite = () => {
-    router.post('/site/create', form.value, {
-        onSuccess: ({props: {flash}}) => {
-            useToast().success(flash?.message)
-            form.value = {name: '', url: ''}
-            router.reload({only: ['site_list']})
-        },
-        onError: (errors) => {
-            // 複数エラーを表示できるようにする
-            useToast().error(Object.values(errors).join('\n'))
-            console.error(errors)
-        }
-    })
-}
-
-const form = ref({
-    name: '',
-    url: ''
 })
 
 const showCreateModal = ref(false)
@@ -36,80 +13,75 @@ const showCreateModal = ref(false)
 </script>
 
 <template>
-    <Header/>
-    <div id="main_wrap">
-        <div class="create_modal_wrap">
-            <button
-                type="button"
-                class="create_modal_button"
-                @click="showCreateModal=true"
-            >
-                <img src="/images/plus.svg" alt="">
-                <span>サイトを追加する</span>
-            </button>
+    <AuthenticatedLayout>
+        <div id="main_wrap">
+            <div class="create_modal_wrap">
+                <button
+                    type="button"
+                    class="create_modal_button"
+                    @click="showCreateModal=true"
+                >
+                    <img src="/images/plus.svg" alt="">
+                    <span>サイトを追加する</span>
+                </button>
+            </div>
+            <SiteList :site_list="site_list"/>
         </div>
-        <SiteList :site_list="site_list"/>
-    </div>
-    <EditSite
-        :isOpen="showCreateModal"
-        @isClose="showCreateModal=false"
-    />
+        <EditSite
+            :isOpen="showCreateModal"
+            @isClose="showCreateModal=false"
+        />
+    </AuthenticatedLayout>
 </template>
 
 <style lang="scss" scoped>
-#main_wrap {
-    max-width: 1240px;
-    margin: auto;
-    padding: 24px 80px;
-    font-size: 13px;
+input {
+    border: 1px solid #E0E0E0;
+    border-radius: 50px;
+}
 
-    input {
-        border: 1px solid #E0E0E0;
-        border-radius: 50px;
+button {
+    background: #0f0f0f;
+    color: #fff;
+    border-radius: 50px;
+    height: 24px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+        width: 14px;
+        height: 14px;
+        object-fit: contain;
     }
 
-    button {
-        background: #0f0f0f;
-        color: #fff;
-        border-radius: 50px;
-        height: 24px;
-        width: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    &.create_modal_button {
+        width: 100%;
+        height: 48px;
+        color: #0f0f0f;
+        background: none;
+        font-size: 14px;
+        line-height: 14px;
+        border: 1px dashed #0f0f0f;
+        border-radius: 8px;
 
         img {
             width: 14px;
             height: 14px;
             object-fit: contain;
-        }
-
-        &.create_modal_button {
-            width: 100%;
-            height: 48px;
-            color: #0f0f0f;
-            background: none;
-            font-size: 14px;
-            line-height: 14px;
-            border: 1px dashed #0f0f0f;
-            border-radius: 8px;
-
-            img {
-                width: 14px;
-                height: 14px;
-                object-fit: contain;
-                margin-bottom: 2px;
-                margin-right: 12px;
-            }
+            margin-bottom: 2px;
+            margin-right: 12px;
         }
     }
 }
 
 .create_modal_wrap {
     opacity: 0.4;
+    margin-bottom: 16px;
 
     &:hover {
-    opacity: 1;
+        opacity: 1;
     }
 }
 

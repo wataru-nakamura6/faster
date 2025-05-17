@@ -5,7 +5,6 @@ use App\Http\Controllers\ScrapeController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\TopController;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 Route::controller(TopController::class)->group(function () {
     Route::get('/', 'index')->name('top');
@@ -19,11 +18,13 @@ Route::controller(SiteController::class)
         Route::post('update/{id}', 'update')->name('update');
         Route::post('site-status', 'siteStatus')->name('site-status');
         Route::post('upload-log', 'uploadLog')->name('upload-log');
-    });
+});
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Laravel/Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::controller(TopController::class)->group(function () {
+        Route::get('/', 'index')->name('top');
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

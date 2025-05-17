@@ -42,7 +42,7 @@ const enter = (el, done) => {
     el.style.height = el.scrollHeight + 'px'
     el.style.opacity = '1'
     setTimeout(() => {
-        el.style.height = 'auto' // 自然な高さに戻す
+        el.style.height = 'auto'
         done()
     }, 300)
 }
@@ -54,7 +54,7 @@ const leave = (el, done) => {
 </script>
 
 <template>
-    <div class="site_wrap">
+    <div class="content-wrap">
         <h2>登録サイト一覧</h2>
         <ul class="site_list">
             <li class="site_item site_title">
@@ -114,19 +114,7 @@ const leave = (el, done) => {
 </template>
 
 <style lang="scss" scoped>
-.site_wrap {
-    border: 1px solid #E0E0E0;
-    border-radius: 8px;
-    margin-top: 16px;
-    box-shadow: #eee 0 0 8px;
-    padding: 8px 16px 16px;
-
-    h2 {
-        font-weight: bold;
-        font-size: 14px;
-        line-height: 2;
-    }
-
+.content-wrap {
     .site_list {
         width: 100%;
         display: flex;
