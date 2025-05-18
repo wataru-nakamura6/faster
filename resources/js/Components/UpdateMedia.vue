@@ -2,7 +2,6 @@
 import { onBeforeUnmount, onMounted, reactive, watch } from 'vue';
 import { useToast } from 'vue-toast-notification';
 import axios from 'axios';
-import { computed } from 'vue';
 
 const props = defineProps({
     site: Object,
@@ -29,10 +28,7 @@ watch(
     { immediate: true }
 );
 
-const canSubmit = computed(() => UploadSite.upload_status !== 1);
-const reSubmit = computed(() => UploadSite.upload_status === 1);
-
-const postMessageToIframe = (type) => {
+const postMessageToIframe = (type = 'button_clicked') => {
     const iframe = document.getElementsByClassName('client_frame')[0];
     if (iframe && iframe.contentWindow) {
         try {
@@ -61,7 +57,6 @@ const postMessageToIframe = (type) => {
 };
 
 const submitRoute = () => postMessageToIframe('button_clicked');
-const submitFullReset = () => postMessageToIframe('full_reset');
 
 const messageHandler = (event) => {
     const { type, status, failedMedia, message  } = event.data || {};
@@ -144,9 +139,8 @@ const saveUploadLog = async (message) => {
             </div>
 
             <div class="actions">
-                <button v-if="canSubmit" @click="submitRoute" class="submit">最適化する</button>
-<!--                TODO:更新処理-->
-                <button v-if="reSubmit" @click="submitFullReset" class="reset">全て再登録</button>
+                <!--                TODO:更新処理-->
+                <button @click="submitRoute" class="submit">最適化する</button>
                 <button @click="$emit('isClose')">キャンセル</button>
             </div>
         </div>
