@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'cloudflare' => [
+        'account_id' => env('CLOUDFLARE_ACCOUNT_ID'),
+        'api_token' => env('CLOUDFLARE_API_TOKEN'),
+        //TODO:下記のドメインを活用して画像パスを変更できるようにする
+        'image_domain' => env('CLOUDFLARE_IMAGE_DOMAIN'),
+    ],
+
 ];
