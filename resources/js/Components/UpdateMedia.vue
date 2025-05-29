@@ -27,41 +27,86 @@ watch(
     },
     { immediate: true }
 );
+watch(
+    () => props.isOpen,
+    (open) => {
+        if (open) {
+            UploadSite.id = props.site?.id || null;
+            UploadSite.url = props.site?.url || '';
+            UploadSite.upload_status = props.site?.upload_status || 0;
 
-const postMessageToIframe = (type = 'button_clicked') => {
-    const iframe = document.getElementsByClassName('client_frame')[0];
-    if (iframe && iframe.contentWindow) {
-        try {
-            iframe.contentWindow.postMessage(
-                {
-                    type: type,
-                    data: {
-                        message: '管理画面からの通知です',
-                        siteId: UploadSite.id
-                    }
-                },
-                UploadSite.url
-            );
-            console.log(`postMessage (${type}) を送信しました`);
-        } catch (err) {
-            console.error('postMessageの送信に失敗:', err);
-            useToast().error('通信に失敗しました', { timeout: 5000 });
-            saveStatusToDB(4);
-            emits('isClose');
+            window.removeEventListener('message', messageHandler);
+            window.addEventListener('message', messageHandler);
         }
-    } else {
-        useToast().error('iframe が見つかりません', { timeout: 5000 });
-        saveStatusToDB(4);
+    }
+);
+
+const openTargetSiteAndPostMessage = async (type = 'button_clicked') => {
+    try {
+        const urlObj = new URL(UploadSite.url);
+        urlObj.searchParams.set('from_admin', 'true');
+        const fullUrl = urlObj.toString();
+
+        const openedWindow = window.open(fullUrl, '_blank');
+        if (!openedWindow) throw new Error('ウィンドウのオープンに失敗しました');
+
+        const targetOrigin = urlObj.origin;
+
+        // メッセージを受け取るイベントリスナー
+        const onMessage = (event) => {
+            if (event.origin !== targetOrigin) return;
+
+            // 子ウィンドウから準備完了メッセージを受け取ったらpostMessage送信
+            if (event.data?.type === 'ready') {
+                openedWindow.postMessage(
+                    {
+                        type,
+                        data: {
+                            message: '管理画面からの通知です',
+                            siteId: UploadSite.id,
+                        },
+                    },
+                    targetOrigin
+                );
+                console.log(`postMessage (${type}) を送信しました`);
+            }
+            // 子ウィンドウからの最適化完了通知を受け取ったら閉じる
+            if (event.data?.type === 'completed') {
+                console.log('最適化処理完了通知を受信しました');
+                if (!openedWindow.closed) {
+                    openedWindow.close();
+                    console.log('子ウィンドウを閉じました');
+                }
+                // イベントリスナーはもう不要なら解除
+                window.removeEventListener('message', onMessage);
+            }
+        };
+
+        window.addEventListener('message', onMessage);
+
+        // ウィンドウが閉じられたら監視停止
+        const checkInterval = setInterval(() => {
+            if (!openedWindow || openedWindow.closed) {
+                clearInterval(checkInterval);
+                window.removeEventListener('message', onMessage);
+                console.warn('対象ウィンドウが閉じられました');
+            }
+        }, 500);
+
+    } catch (err) {
+        console.error('ウィンドウのオープンまたは postMessage に失敗:', err);
+        useToast().error('通信に失敗しました', { timeout: 5000 });
+        await saveStatusToDB(4);
         emits('isClose');
     }
 };
 
-const submitRoute = () => postMessageToIframe('button_clicked');
+const submitRoute = () => openTargetSiteAndPostMessage('button_clicked');
 
 const messageHandler = (event) => {
-    const { type, status, failedMedia, message  } = event.data || {};
+    const { type, status, failedMedia, message, logs } = event.data || {};
     if (type !== 'completed') return;
-    console.log(failedMedia)
+    console.log(message)
 
     switch (status) {
         case 'success':
@@ -83,8 +128,14 @@ const messageHandler = (event) => {
             useToast().error('不明なエラーが発生しました。', { timeout: 5000 });
             break;
     }
-    const complete_message = (failedMedia !== null)? message+':'+failedMedia : message
+    const complete_message = (failedMedia !== null)
+        ? message + ':' + JSON.stringify(failedMedia)
+        : message;
     saveUploadLog(complete_message);
+
+    if (logs) {
+        saveUploadLog(JSON.stringify(logs));
+    }
 
     emits('isClose');
     window.removeEventListener('message', messageHandler);
@@ -131,15 +182,9 @@ const saveUploadLog = async (message) => {
                     <li>・高速化タグは head タグ内に埋め込み済みですか？</li>
                     <li>・サイトは完成した状態ですか？</li>
                 </ul>
-                <iframe
-                    class="client_frame"
-                    :src="UploadSite.url"
-                    style="width:0; height:0; border:0; visibility:hidden;"
-                ></iframe>
             </div>
 
             <div class="actions">
-                <!--                TODO:更新処理-->
                 <button @click="submitRoute" class="submit">最適化する</button>
                 <button @click="$emit('isClose')">キャンセル</button>
             </div>
