@@ -93,8 +93,8 @@ const leave = (el, done) => {
                     @leave="leave"
                 >
                     <div class="accordion" v-show="selectedId===site.id">
-                        最適化タグ：&lt;script src="https://media-upload.kushida.workers.dev/embed.js?id={{ site.uuid }}"&gt;&lt;/script&gt;<br>
-                        高速表示タグ：&lt;script src="https://media-replace.kushida.workers.dev/embed.js?id={{ site.uuid }}"&gt;&lt;/script&gt;
+                        最適化タグ：&lt;script src="https://media-upload.kushida.workers.dev/embed.js?id={{ site.uuid }}" defer&gt;&lt;/script&gt;<br>
+                        高速表示タグ：&lt;script src="https://media-replace.kushida.workers.dev/embed.js?id={{ site.uuid }}" defer&gt;&lt;/script&gt;
                     </div>
                 </transition>
             </li>
