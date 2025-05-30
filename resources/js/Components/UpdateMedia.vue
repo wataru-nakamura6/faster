@@ -47,7 +47,9 @@ const openTargetSiteAndPostMessage = async (type = 'button_clicked') => {
         urlObj.searchParams.set('from_admin', 'true');
         const fullUrl = urlObj.toString();
 
-        const openedWindow = window.open(fullUrl, '_blank');
+        const cacheBuster = `cb=${Date.now()}`;
+        const fullUrlWithCb = fullUrl.includes('?') ? `${fullUrl}&${cacheBuster}` : `${fullUrl}?${cacheBuster}`;
+        const openedWindow = window.open(fullUrlWithCb, '_blank');
         if (!openedWindow) throw new Error('ウィンドウのオープンに失敗しました');
 
         const targetOrigin = urlObj.origin;
