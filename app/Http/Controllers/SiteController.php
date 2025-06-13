@@ -10,11 +10,9 @@ use Illuminate\Support\Str;
 
 class SiteController extends Controller
 {
-    // TODO: siteのnameがuniqueになっているので重複可能に修正
     public function create(StoreSiteRequest $request)
     {
         $validated = $request->validated();
-
         try {
             $siteData = array_merge($validated, [
                 'uuid' => Str::random(),
@@ -29,7 +27,7 @@ class SiteController extends Controller
 
         } catch (\Exception $e) {
             return redirect()->route('top')->with('flash', [
-                'message' => '新規登録に失敗しました。もう一度お試しください。'
+                'message' => '登録に失敗しました。もう一度お試しください。',
             ]);
         }
     }
